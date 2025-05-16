@@ -43,4 +43,17 @@ class InboxApiTest extends TestCase
             ->assertJsonPath('data.name', 'Test Inbox')
             ->assertJsonPath('data.settings.forwarding_enabled', true);
     }
+
+    /** @test */
+    public function it_shows_specific_inbox()
+    {
+        $user = \App\Models\User::factory()->create();
+        $inbox = Inbox::factory()->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user)
+            ->getJson("/api/fake-inbox/inboxes/{$inbox->id}");
+
+        $response->assertOk()
+            ->assertJsonPath('data.id', $inbox->id);
+    }
 }
